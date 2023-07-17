@@ -1,32 +1,39 @@
-<!-- options.html -->
-
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>翻译插件设置</title>
-  <style>
-    /* 些简单的样式 */
-  </style>
+  <link rel="stylesheet" href="options.css">
 </head>
+
 <body>
 
-  <h1>设置</h1>
+  <img src="icon.png">
 
-  <form>
+  <h2>翻译插件设置</h2>
 
-    <div>
-      <input type="checkbox" id="autoTranslateCheckbox" />
-      <label for="autoTranslateCheckbox">自动翻译</label>
-    </div>
+  <div class="option">
+    <label>目标语言:</label>
+    <select id="targetLang">
+      <option value="en">英语</option>
+      <option value="ja">日语</option>
+      <option value="fr">法语</option>
+    </select>
+  </div>
 
-    <div>
-      <button type="submit">保存</button>
-    </div>
+  <div class="option">
+    <label>自动翻译:</label>
+    <input type="checkbox" id="autoTranslate">
+  </div>
 
-  </form>
+  <button id="save">保存</button>
+
+  <div id="saveSuccess">保存成功!</div>
+  <div id="saveError">保存失败!</div>
 
   <script src="options.js"></script>
 
 </body>
+
 </html>

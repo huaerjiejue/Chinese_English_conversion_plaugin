@@ -1,48 +1,40 @@
-/*
-获取输入框内容
-将翻译结果插入输入框
-实现中英文切换
-*/
+// 引入Google Translate API
+const {Translate} = require('@google-cloud/translate').v2;
 
-// 定义变量
-const inputElement = document.querySelector('input');
-let translatedText = '';
-const chrome = window.chrome || window.browser;
+// 初始化Translate客户端
+const translate = new Translate();
 
-// 监听背景页消息
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // 如果接收到翻译结果
-  if(request.translated){
-    // 保存结果
-    translatedText = request.translated;
-    // 插入输入框
-    inputElement.value = translatedText;
+// 输入框元素
+const input = document.querySelector('#searchInput');
+
+// 翻译触发模式
+const TRIGGER = '/en';
+
+// 监听输入变化
+input.addEventListener('input', translate);
+
+// 翻译函数
+async function translate() {
+
+  // 检测触发条件
+  if(!input.value.endsWith(TRIGGER)) {
+    return
   }
 
-  // 如果是自动翻译设置
-  if(request.autoTranslate){
-    // 更新设置
-    isAutoTranslate = request.autoTranslate;
-  }
-});
+  // 获取输入内容
+  const text = input.value.slice(0, -TRIGGER.length);
 
-// 监听输入框输入
-inputElement.addEventListener('input', () => {
-  // 如果自动翻译打开
-  if(isAutoTranslate){
-     // 发送翻译请求到背景页
-     chrome.runtime.sendMessage({
-       type: 'translate',
-       text: inputElement.value
-     });
-  }
-});
+  try {
+    // 调用Translate API翻译
+    const [translation] = await translate.translate(text, 'en');
+    const translatedText = translation;
 
-// 中英文切换
-document.addEventListener('keydown', (e) => {
-  if(e.code === 'Space' && e.ctrlKey){
-     // 切换中英文
-     inputElement.value = inputElement.value === translatedText
-       ? translatedText : translatedText;
+    // 填入翻译结果
+    input.value = translatedText + TRIGGER;
+
+  } catch(error) {
+    console.error(error);
+    input.value = '翻译出错' + TRIGGER;
   }
-});
+
+}
